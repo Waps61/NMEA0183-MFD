@@ -185,7 +185,7 @@ lv_obj_t *screen_main_create(void)
 
   // Create the panels TRIP, WIND, COURSE, BRIGHTNESS and SETTINGS
   lv_obj_t *mfd_trip_panel = mfd_panel_create(lv_obj_0, "TRIP");
-  lv_obj_add_style(mfd_trip_panel, &mfd_style, 0);
+  //lv_obj_add_style(mfd_trip_panel, mfd_style, 0);
   lv_obj_t *mfd_wind_panel = mfd_panel_create(lv_obj_0, "WIND");
   mfd_hide_panel(mfd_wind_panel);
   lv_obj_t *mfd_course_panel = mfd_panel_create(lv_obj_0, "COURSE");

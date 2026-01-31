@@ -59,6 +59,20 @@ static void switch_theme_event_cb(lv_event_t *e)
   }
 }
 
+void mfd_update_style(lv_obj_t *parent, lv_style_t *oldstyle, lv_style_t *newstyle)
+{
+  uint32_t i;
+  uint32_t count = lv_obj_get_child_count(parent);
+  for (i = 0; i < count; i++)
+  {
+    lv_obj_t *child = lv_obj_get_child(parent, i);
+    /* Do something with `child`. */
+    
+    lv_obj_replace_style(child,oldstyle, newstyle, 0);
+  }
+  mfd_style = *newstyle;
+}
+
 void mfd_init_styles()
 {
   mfd_styles_inited = true;

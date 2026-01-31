@@ -89,10 +89,10 @@ extern "C"
    * GLOBAL PROTOTYPES
    *********************/
 
-  static void
-  switch_theme_event_cb(lv_event_t *e);
+  static void switch_theme_event_cb(lv_event_t *e);
 
   void mfd_init_styles();
+  void mfd_update_style(lv_obj_t *parent, lv_style_t *oldstyle, lv_style_t *newstyle);
 
   /**********************
    *      MACROS

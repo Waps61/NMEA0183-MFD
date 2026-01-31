@@ -53,6 +53,11 @@ static void brightness_slider_event_cb(lv_event_t *e)
 
 static void buttonbar_event_cb(lv_event_t *e)
 {
+  /*
+  LV_UNUSED(e);
+    if(lv_subject_get_int(&theme_subject) == THEME_MODE_LIGHT) lv_subject_set_int(&theme_subject, THEME_MODE_DARK);
+    else lv_subject_set_int(&theme_subject, THEME_MODE_LIGHT);
+  */
   lv_obj_t *obj = lv_event_get_target_obj(e);
   lv_draw_task_t *draw_task = lv_event_get_draw_task(e);
   lv_draw_dsc_base_t *base_dsc = (lv_draw_dsc_base_t *)lv_draw_task_get_draw_dsc(draw_task);
@@ -87,6 +92,8 @@ static void buttonbar_event_cb(lv_event_t *e)
       {
         label_draw_dsc->color = lv_color_hex(DAY_TEXT_ON_BACKGROUND);
       }
+      //mfd_update_style(lv_obj_get_screen(screen_main), &mfd_style, &mfd_style_day);
+      mfd_style = mfd_style_day;
     }
     else if (base_dsc->id1 == 1)
     {
@@ -105,6 +112,9 @@ static void buttonbar_event_cb(lv_event_t *e)
       {
         label_draw_dsc->color = lv_color_hex(SUN_TEXT_ON_BACKGROUND);
       }
+
+    
+      mfd_style = mfd_style_sun;
     }
 
     else if (base_dsc->id1 == 2)
@@ -124,6 +134,7 @@ static void buttonbar_event_cb(lv_event_t *e)
       {
         label_draw_dsc->color = lv_color_hex(DAWN_TEXT_ON_BACKGROUND);
       }
+      mfd_style = mfd_style_dawn;
     }
     /*Change the draw descriptor of the 3rd button*/
     else if (base_dsc->id1 == 3)
@@ -141,12 +152,13 @@ static void buttonbar_event_cb(lv_event_t *e)
       {
         label_draw_dsc->color = lv_color_hex(NIGHT_TEXT_ON_BACKGROUND);
       }
-
-      lv_draw_box_shadow_dsc_t *box_shadow_draw_dsc = lv_draw_task_get_box_shadow_dsc(draw_task);
-      if (box_shadow_draw_dsc)
-      {
-        box_shadow_draw_dsc->radius = LV_RADIUS_CIRCLE;
-      }
+      //mfd_update_style(lv_obj_get_screen(screen_active), &mfd_style, &mfd_style_night);
+      mfd_style = mfd_style_night;
+      // lv_draw_box_shadow_dsc_t *box_shadow_draw_dsc = lv_draw_task_get_box_shadow_dsc(draw_task);
+      // if (box_shadow_draw_dsc)
+      // {
+      //   box_shadow_draw_dsc->radius = LV_RADIUS_CIRCLE;
+      // }
     }
   }
 }
