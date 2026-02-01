@@ -30,5 +30,4 @@ Internet research got me this. BIG Thanks for whoever made this
     27 /* RST */, jd9165_init_operations, sizeof(jd9165_init_operations) / sizeof(lcd_init_cmd_t));`\
 See the NMEA0183_conf.h file for more details to get this display up and running\
 ## Example
-![screenshot of the mainscreen]
-(/Waps61/NMEA0183-MFD/blob/main/screenshots/IMG_4331.jpg))
+![screenshot of the mainscreen](/Waps61/NMEA0183-MFD/blob/main/screenshots/IMG_4331.jpg))
