@@ -8,6 +8,8 @@
 #include <lvgl.h>
 #include <ui/mfd_themes.h>
 #include <font/mfd_fonts.h>
+#include <string.h>
+#include <stdio.h>
 
 /*********************
  *      DEFINES
@@ -59,18 +61,33 @@ static void switch_theme_event_cb(lv_event_t *e)
   }
 }
 
-void mfd_update_style(lv_obj_t *parent, lv_style_t *oldstyle, lv_style_t *newstyle)
+void mfd_update_style( lv_obj_t *parent, lv_style_t *newstyle)
 {
   uint32_t i;
-  uint32_t count = lv_obj_get_child_count(parent);
+  lv_obj_t *chief = lv_obj_get_parent(parent);
+  lv_obj_t *the_boss = NULL;
+  char chief_name[50]={0};
+  //sprintf(chief_name,"%s",lv_obj_get_name(chief));
+  lv_log("init chief's name = %s\n", lv_obj_get_name(chief));
+  while (strcmp(chief_name,"screen_main_#") != 0)
+  {
+    /* code */
+    chief = lv_obj_get_parent(chief);
+    sprintf(chief_name, "%s", lv_obj_get_name(chief));
+    lv_log("chief's name = %s\n", lv_obj_get_name(chief));
+    the_boss = chief;
+  }
+  lv_log("the boss's name = %s\n", lv_obj_get_name(the_boss));
+  uint32_t count = lv_obj_get_child_count(the_boss);
+  lv_log("the boss has %d children", count);
   for (i = 0; i < count; i++)
   {
     lv_obj_t *child = lv_obj_get_child(parent, i);
     /* Do something with `child`. */
     
-    lv_obj_replace_style(child,oldstyle, newstyle, 0);
+    lv_obj_replace_style(child,&mfd_style, newstyle, 0);
   }
-  mfd_style = *newstyle;
+  lv_style_copy(&mfd_style,newstyle);
 }
 
 void mfd_init_styles()
@@ -119,5 +136,6 @@ void mfd_init_styles()
   lv_style_set_text_font(&mfd_style_dawn, &ui_font_lv_conthrax_16);
   lv_style_set_text_align(&mfd_style_dawn, LV_ALIGN_CENTER);
 
-  mfd_style = mfd_style_day;
+  lv_style_init(&mfd_style);
+  lv_style_copy(&mfd_style,&mfd_style_day);
 }

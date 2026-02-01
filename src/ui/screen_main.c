@@ -166,11 +166,14 @@ lv_obj_t *screen_main_create(void)
   if (screen_main == NULL)
     screen_main = lv_obj_create(NULL);
   // Create the main screen as a permanent screen
-  lv_obj_t *lv_obj_0 = screen_main;
-  lv_obj_set_name_static(lv_obj_0, "screen_main_#");
+  //lv_obj_t *lv_obj_0 = screen_main;
+  //screen_active = lv_obj_create(screen_main);
+  screen_active = screen_main;
+  //lv_log("screen active = %s", lv_obj_get_name(screen_main));
+  lv_obj_set_name_static(screen_active, "screen_main_#");
 
   // Add a menubar
-  lv_obj_t *menu_bar = lv_obj_create(lv_obj_0);
+  lv_obj_t *menu_bar = lv_obj_create(screen_active);
   lv_obj_remove_style_all(menu_bar);
   lv_obj_set_flex_flow(menu_bar, LV_FLEX_FLOW_COLUMN);
   lv_obj_add_style(menu_bar, &mfd_style_dawn, LV_STATE_DEFAULT);
@@ -184,15 +187,15 @@ lv_obj_t *screen_main_create(void)
   lv_obj_set_style_bg_color(menu_bar, lv_color_hex(NIGHT_BACKGROUND), 0);
 
   // Create the panels TRIP, WIND, COURSE, BRIGHTNESS and SETTINGS
-  lv_obj_t *mfd_trip_panel = mfd_panel_create(lv_obj_0, "TRIP");
+  lv_obj_t *mfd_trip_panel = mfd_panel_create(screen_active, "TRIP");
   //lv_obj_add_style(mfd_trip_panel, mfd_style, 0);
-  lv_obj_t *mfd_wind_panel = mfd_panel_create(lv_obj_0, "WIND");
+  lv_obj_t *mfd_wind_panel = mfd_panel_create(screen_active, "WIND");
   mfd_hide_panel(mfd_wind_panel);
-  lv_obj_t *mfd_course_panel = mfd_panel_create(lv_obj_0, "COURSE");
+  lv_obj_t *mfd_course_panel = mfd_panel_create(screen_active, "COURSE");
   mfd_hide_panel(mfd_course_panel);
-  lv_obj_t *mfd_bright_panel = mfd_panel_create(lv_obj_0, "BRIGHTNESS");
+  lv_obj_t *mfd_bright_panel = mfd_panel_create(screen_active, "BRIGHTNESS");
   mfd_hide_panel(mfd_bright_panel);
-  lv_obj_t *mfd_settings_panel = mfd_panel_create(lv_obj_0, " SETTING");
+  lv_obj_t *mfd_settings_panel = mfd_panel_create(screen_active, " SETTING");
   mfd_hide_panel(mfd_settings_panel);
 
   // Add the buttons and their link to their panel to the menubar
@@ -277,5 +280,5 @@ lv_obj_t *screen_main_create(void)
 
   LV_TRACE_OBJ_CREATE("finished");
 
-  return lv_obj_0;
+  return screen_active;
 }

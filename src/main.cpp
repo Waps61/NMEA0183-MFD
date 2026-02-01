@@ -153,4 +153,9 @@ void loop()
   #ifdef DEMO
   test_screen_data_updates();
   #endif
+  if (mfd_style_changed)
+  {
+    mfd_style_changed = false;
+    lv_obj_report_style_change(&mfd_style_night);
+  }
 }
