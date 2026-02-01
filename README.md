@@ -31,4 +31,4 @@ Internet research got me this. BIG Thanks for whoever made this
 See the NMEA0183_conf.h file for more details to get this display up and running\
 ## Example
 ![screenshot of the mainscreen]
-(screenshots/IMG_4331.jpg)
+(/Waps61/NMEA0183-MFD/blob/main/screenshots/IMG_4331.jpg))
