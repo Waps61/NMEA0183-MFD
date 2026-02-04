@@ -212,6 +212,7 @@ lv_obj_t *mfd_set_tile_style(lv_obj_t *tile)
 lv_obj_t *mfd_set_btn_style(lv_obj_t *btn)
 {
   lv_style_set_bg_color(&mfd_style_btn, lv_color_hex(DAWN_PRIMARY));
+  lv_style_set_text_color(&mfd_style_btn, lv_color_hex(DAY_TEXT_ON_PRIMARY));
   lv_style_set_width(&mfd_style_btn, 100);
   lv_style_set_height(&mfd_style_btn, 80);
   lv_style_set_max_width(&mfd_style_btn, lv_pct(100));
