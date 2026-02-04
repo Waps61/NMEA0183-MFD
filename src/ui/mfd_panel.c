@@ -150,38 +150,23 @@ lv_obj_t *mfd_panel_create(lv_obj_t *parent, const char *title)
     inited = true;
 
     lv_style_init(&styles.style_main);
-      lv_style_set_pad_column(&styles.style_main, 5);
-    lv_style_set_pad_row(&styles.style_main, 10);
-
-    lv_style_set_bg_color(&styles.style_main, lv_color_hex(DAY_BACKGROUND));
-    lv_style_set_text_color(&styles.style_main, lv_color_hex(DAY_TEXT_ON_PRIMARY));
-    lv_style_set_radius(&styles.style_main, 12);
-    lv_style_set_bg_opa(&styles.style_main, LV_OPA_COVER);
-    lv_style_set_shadow_width(&styles.style_main, 24);
-    lv_style_set_shadow_offset_x(&styles.style_main, 4);
-    lv_style_set_shadow_offset_y(&styles.style_main, 6);
-    lv_style_set_pad_all(&styles.style_main, 12);
-    lv_style_set_pad_gap(&styles.style_main, 16);
-    lv_style_set_width(&styles.style_main, 865);
-    lv_style_set_height(&styles.style_main, lv_pct(98));
-    lv_style_set_x(&styles.style_main, 150);
-    lv_style_set_y(&styles.style_main, 0);
+   
 
     lv_style_init(&styles.style_scrollbar);
-    lv_style_set_width(&styles.style_scrollbar, 4);
-    lv_style_set_radius(&styles.style_scrollbar, 2);
-    lv_style_set_pad_right(&styles.style_scrollbar, 8);
-    lv_style_set_pad_ver(&styles.style_scrollbar, 8);
-    lv_style_set_bg_opa(&styles.style_scrollbar, LV_OPA_50);
+   
 
     lv_subject_add_observer_with_target(&theme_subject, mfd_panel_style_observer_cb, &styles, NULL);
   }
 
   lv_obj_t *panel = lv_obj_create(parent);
   lv_obj_set_name_static(panel, title);
-  lv_obj_remove_style_all(panel);
-  lv_obj_add_style(panel, &styles.style_main, 0);
-  lv_obj_add_style(panel, &styles.style_scrollbar, LV_PART_SCROLLBAR);
+  
+  mfd_set_style_sun(panel);
+  lv_obj_set_width(panel, 865);
+  lv_obj_set_height(panel, lv_pct(98));
+  lv_obj_set_x(panel, 150);
+  lv_obj_set_y(panel, 0);
+
   mfd_panel_t *paneldata;
   paneldata = (mfd_panel_t*)malloc(sizeof(mfd_panel_t));
   paneldata->draw_pos_x = TILE_START_POS_X;

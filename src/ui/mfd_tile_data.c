@@ -1,7 +1,12 @@
 /**
  * @file mfd_themes.c
  */
-
+/*
+  Project:  NMEA0183 Multi Function Display, Copyright 2026, Roy Wassili
+  Contact:  waps61 @gmail.com
+  Tile data implementation. A tile_data is a small label container to present the actual meter readingfrom
+  an NMEA tag.
+*/
 /*********************
  *      INCLUDES
  *********************/

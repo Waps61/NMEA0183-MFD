@@ -167,7 +167,7 @@ void touchscreen_setup()
   {
     disp = lv_display_create(screenWidth, screenHeight);
     // lv_disp_set_bg_color(disp, LV_PALETTE_AMBER); gibt es nicht!
-    lv_obj_set_style_bg_color(lv_screen_active(), lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN);
+    //lv_obj_set_style_bg_color(lv_screen_active(), lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN);
     lv_display_set_flush_cb(disp, my_disp_flush);
 #ifdef DIRECT_RENDER_MODE
     lv_log("\n\n+++++ LV_DISPLAY_RENDER_MODE_DIRECT \n");

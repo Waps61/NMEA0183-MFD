@@ -116,6 +116,10 @@ Example:
 $HCXDR,A,171,D,PITCH,A,-37,D,ROLL,G,367,,MAGX,G,2420,,MAGY,G,-8984,,MAGZ*41
 */
 
+#define FIELD_BUFFER 15
+
+
+
 static float boat_sog = 0.0;
 static int boat_hdg = 0;
 static int boat_awa = 0;

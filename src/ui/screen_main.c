@@ -110,7 +110,7 @@ void test_screen_data_updates()
     lv_label_set_text(TRPvalue, tile_data_buffer);
     sprintf(tile_data_buffer, "%.1f", (float)(rand() % 25) / 10 + 5);
 
-    sprintf(tile_data_buffer, "%d", boat_cog-boat_cts);
+    sprintf(tile_data_buffer, "%d", boat_cog - boat_cts);
     lv_label_set_text(CMGvalue, tile_data_buffer);
   }
 }
@@ -119,8 +119,9 @@ void menu_btn_event_cb(lv_event_t *event)
 {
   lv_obj_t *panel_btn = NULL;
   panel_btn = (lv_obj_t *)lv_event_get_user_data(event);
-  // char *panel_name = lv_obj_get_name(panel_btn);
-  // lv_log("panel to show is %s\n", panel_name);
+  char *panel_name = lv_obj_get_name(panel_btn);
+  lv_log("panel to show is %s\n", panel_name);
+
   // lv_log(" panels equal is: %d\n", strcmp(panel_name, "TRIP"));
   // if (strcmp(panel_name, "TRIP") == 0)
   // {
@@ -147,7 +148,7 @@ void menu_btn_event_cb(lv_event_t *event)
   // }
   if (lv_obj_has_flag(panel_btn, LV_OBJ_FLAG_HIDDEN))
     mfd_show_panel(panel_btn);
-  else
+  else if (strcmp(panel_name, "TRIP") != 0)
     mfd_hide_panel(panel_btn);
 }
 
@@ -159,36 +160,48 @@ lv_obj_t *screen_main_create(void)
 
   if (!style_inited)
   {
+    lv_log("Initiating styles...\n");
+    mfd_styles_inited = false;
     mfd_init_styles();
     style_inited = true;
   }
 
   if (screen_main == NULL)
-    screen_main = lv_obj_create(NULL);
+    screen_main = lv_obj_create(lv_screen_active()); // lv_obj_create(NULL);
   // Create the main screen as a permanent screen
-  //lv_obj_t *lv_obj_0 = screen_main;
-  //screen_active = lv_obj_create(screen_main);
+  // lv_obj_t *lv_obj_0 = screen_main;
+  // screen_active = lv_obj_create(screen_main);
   screen_active = screen_main;
-  //lv_log("screen active = %s", lv_obj_get_name(screen_main));
+  // lv_log("screen active = %s", lv_obj_get_name(screen_main));
   lv_obj_set_name_static(screen_active, "screen_main_#");
 
   // Add a menubar
   lv_obj_t *menu_bar = lv_obj_create(screen_active);
   lv_obj_remove_style_all(menu_bar);
+  //mfd_set_menu_bar_style(menu_bar);
   lv_obj_set_flex_flow(menu_bar, LV_FLEX_FLOW_COLUMN);
-  lv_obj_add_style(menu_bar, &mfd_style_dawn, LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(menu_bar, lv_color_hex(DAWN_BACKGROUND),0);
+  lv_obj_set_style_bg_opa(menu_bar, LV_OPA_50,0);
+  lv_obj_set_style_text_color(menu_bar, lv_color_hex(DAY_TEXT_ON_BACKGROUND),0);
+  lv_obj_set_style_text_opa(menu_bar, LV_OPA_50,0);
+  lv_obj_set_style_text_font(menu_bar, &ui_font_lv_conthrax_16,0);
+  lv_obj_set_style_border_color(menu_bar, lv_color_hex(DAWN_TEXT_ON_PRIMARY),0);
+  lv_obj_set_style_border_width(menu_bar, 1,0);
+  lv_obj_set_style_text_font(menu_bar, &ui_font_lv_conthrax_16,0);
+  lv_obj_set_style_text_align(menu_bar, LV_ALIGN_CENTER,0);
+  lv_obj_set_style_shadow_color(menu_bar, lv_color_hex(DAWN_SURFACE), 0);
+  lv_obj_set_style_shadow_width(menu_bar, 5, 0);
+
   lv_obj_set_x(menu_bar, 0);
   lv_obj_set_y(menu_bar, 0);
-  lv_obj_set_style_radius(menu_bar, 5, 0);
-  lv_obj_set_style_margin_all(menu_bar, 5, 0);
-  lv_obj_set_style_bg_color(menu_bar, lv_palette_main(LV_PALETTE_DEEP_ORANGE), LV_STATE_DEFAULT);
-
-  lv_obj_set_size(menu_bar, 150, lv_pct(100));
-  lv_obj_set_style_bg_color(menu_bar, lv_color_hex(NIGHT_BACKGROUND), 0);
+  lv_obj_set_width(menu_bar, 145);
+  lv_obj_set_height(menu_bar, lv_pct(100));
+  lv_obj_set_style_radius(menu_bar, 5,0);
+  lv_obj_set_style_margin_all(menu_bar, 2,0);
+  
 
   // Create the panels TRIP, WIND, COURSE, BRIGHTNESS and SETTINGS
   lv_obj_t *mfd_trip_panel = mfd_panel_create(screen_active, "TRIP");
-  //lv_obj_add_style(mfd_trip_panel, mfd_style, 0);
   lv_obj_t *mfd_wind_panel = mfd_panel_create(screen_active, "WIND");
   mfd_hide_panel(mfd_wind_panel);
   lv_obj_t *mfd_course_panel = mfd_panel_create(screen_active, "COURSE");
@@ -205,7 +218,6 @@ lv_obj_t *screen_main_create(void)
   lv_obj_add_event_cb(trip_btn, menu_btn_event_cb, LV_EVENT_CLICKED, mfd_trip_panel);
 
   lv_obj_t *wind_btn = mfd_button_create(menu_bar, "WIND");
-  lv_obj_add_flag(wind_btn, LV_OBJ_FLAG_CHECKABLE);
   lv_obj_add_event_cb(wind_btn, menu_btn_event_cb, LV_EVENT_CLICKED, mfd_wind_panel);
 
   lv_obj_t *course_btn = mfd_button_create(menu_bar, "COURSE");
@@ -218,6 +230,7 @@ lv_obj_t *screen_main_create(void)
   lv_obj_add_event_cb(setting_btn, menu_btn_event_cb, LV_EVENT_CLICKED, mfd_settings_panel);
 
   lv_obj_t *lv_button_0 = mfd_button_create(menu_bar, "(i)");
+  lv_obj_add_flag(wind_btn, LV_OBJ_FLAG_CHECKABLE);
 
   // Create the about screen as a child of the main screen
   lv_obj_add_screen_create_event(lv_button_0, LV_EVENT_CLICKED, screen_about_create, LV_SCREEN_LOAD_ANIM_MOVE_TOP, 500, 0);
@@ -225,8 +238,7 @@ lv_obj_t *screen_main_create(void)
   // Add the tiles and their tile_data objects to the trip panel
   CTSbox = mfd_panel_add_tile(mfd_trip_panel, "CTS", "o", CTSbox);
   CTSvalue = mfd_tile_add_tile_data(CTSbox, CTSvalue);
-  // lv_obj_add_event_cb(CTSvalue, mfd_tile_data_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
-
+  
   COGbox = mfd_panel_add_tile(mfd_trip_panel, "COG", "o", COGbox);
   COGvalue = mfd_tile_add_tile_data(COGbox, COGvalue);
 
@@ -245,8 +257,7 @@ lv_obj_t *screen_main_create(void)
   // Add the tiles and their tile_data objects to thwe wind panel
   AWAbox = mfd_panel_add_tile(mfd_wind_panel, "AWA", "o", AWAbox);
   AWAvalue = mfd_tile_add_tile_data(AWAbox, AWAvalue);
-  // lv_obj_add_event_cb(CTSvalue, mfd_tile_data_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
-
+  
   TWAbox = mfd_panel_add_tile(mfd_wind_panel, "TWA", "o", TWAbox);
   TWAvalue = mfd_tile_add_tile_data(TWAbox, TWAvalue);
 

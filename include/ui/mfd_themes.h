@@ -82,7 +82,8 @@ extern "C"
    **********************/
 
   static lv_subject_t theme_subject;
-  static lv_style_t mfd_style_day, mfd_style_night, mfd_style_sun, mfd_style_dawn, mfd_style;
+  static   lv_style_t mfd_style_day, mfd_style_night, mfd_style_sun, mfd_style_dawn, mfd_style;
+  static lv_style_t mfd_style_tile, mfd_style_menubar, mfd_style_btn, mfd_style_btn_pressed;
   static bool mfd_styles_inited;
   static bool mfd_style_changed;
 
@@ -94,6 +95,17 @@ extern "C"
 
   void mfd_init_styles();
   void mfd_update_style( lv_obj_t *parent, lv_style_t *newstyle);
+
+  
+  lv_obj_t *mfd_set_style_day(lv_obj_t *obj);
+  lv_obj_t *mfd_set_style_night(lv_obj_t *obj);
+  lv_obj_t *mfd_set_style_sun(lv_obj_t *obj);
+  lv_obj_t *mfd_set_obj_style_dawn(lv_obj_t *obj);
+  lv_obj_t *mfd_set_menu_bar_style(lv_obj_t *mbar);
+  lv_obj_t *mfd_set_panel_style(lv_obj_t *panel);
+  lv_obj_t *mfd_set_tile_style(lv_obj_t *tile);
+  lv_obj_t *mfd_set_btn_style(lv_obj_t *btn);
+  lv_obj_t *mfd_set_btn_pressed_style(lv_obj_t *btn);
 
   /**********************
    *      MACROS

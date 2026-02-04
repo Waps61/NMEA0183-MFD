@@ -91,49 +91,11 @@ lv_obj_t *mfd_button_create(lv_obj_t *parent, const char *text)
     mfd_init_styles();
   lv_style_init(&styles.style_main);
   lv_style_init(&styles.style_pressed);
-  styles.style_main = mfd_style_day;
-  styles.style_pressed = mfd_style_dawn;
-
-  lv_style_set_max_width(&styles.style_main,lv_pct(100));
-  lv_style_set_max_width(&styles.style_pressed,lv_pct(100));
-  lv_style_set_min_width(&styles.style_main, lv_pct(100));
-  lv_style_set_min_width(&styles.style_pressed, lv_pct(100));
-  //lv_style_set_max_height(&styles.style_main,100);
-  //lv_style_set_max_height(&styles.style_pressed,100);
-  lv_style_set_min_height(&styles.style_main, 75);
-  lv_style_set_min_height(&styles.style_pressed, 75);
-  lv_style_set_pad_all(&styles.style_main, 10);
-  lv_style_set_pad_all(&styles.style_pressed, 10);
-  lv_style_set_margin_all(&styles.style_main, 10);
-  lv_style_set_margin_all(&styles.style_pressed, 10);
-  lv_style_set_shadow_color(&styles.style_main, lv_color_hex(NIGHT_SURFACE));
-  lv_style_set_shadow_color(&styles.style_pressed, lv_color_darken(lv_color_hex(NIGHT_SURFACE),LV_OPA_40));
-  lv_style_set_shadow_width(&styles.style_main, 5);
-  lv_style_set_shadow_width(&styles.style_pressed, 5);
-
-  // {
-  //   inited = true;
-
-  //   lv_style_init(&styles.style_main);
-  //   lv_style_set_radius(&styles.style_main, LV_RADIUS_CIRCLE);
-  //   lv_style_set_bg_opa(&styles.style_main, LV_OPA_COVER);
-  //   lv_style_set_bg_grad_dir(&styles.style_main, LV_GRAD_DIR_HOR);
-  //   lv_style_set_shadow_width(&styles.style_main, 24);
-  //   lv_style_set_shadow_offset_y(&styles.style_main, 6);
-  //   lv_style_set_pad_hor(&styles.style_main, 32);
-  //   lv_style_set_pad_ver(&styles.style_main, 12);
-
-  //   lv_style_init(&styles.style_pressed);
-  //   lv_style_set_color_filter_dsc(&styles.style_pressed, &lv_color_filter_shade);
-  //   lv_subject_add_observer_with_target(&theme_subject, mfd_button_style_observer_cb, &styles, NULL);
-  // }
+  lv_style_copy(&styles.style_main, &mfd_style_btn);
+  lv_style_copy(&styles.style_pressed, &mfd_style_btn_pressed);
 
   lv_obj_t *btn = lv_button_create(parent);
-  lv_obj_set_name_static(btn, text);
-  // lv_obj_remove_style_all(btn);
-  lv_obj_add_style(btn, &styles.style_main, 0);
-  lv_obj_add_style(btn, &styles.style_pressed, LV_STATE_PRESSED);
-  //lv_obj_add_event_cb(btn, event_cb, LV_EVENT_CLICKED, NULL);
+  mfd_set_btn_style(btn);
 
   lv_obj_t *label = lv_label_create(btn);
   lv_label_set_text(label, text);

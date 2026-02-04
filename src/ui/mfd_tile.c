@@ -128,30 +128,13 @@ lv_obj_t *mfd_tile_create(lv_obj_t *parent)
     inited = true;
 
     lv_style_init(&styles.style_main);
-    lv_style_set_radius(&styles.style_main, 12);
-    lv_style_set_bg_opa(&styles.style_main, LV_OPA_COVER);
-    lv_style_set_shadow_width(&styles.style_main, 24);
-    lv_style_set_shadow_offset_x(&styles.style_main, 4);
-    lv_style_set_shadow_offset_y(&styles.style_main, 6);
-    lv_style_set_pad_all(&styles.style_main, 12);
-    lv_style_set_pad_gap(&styles.style_main, 16);
-
     lv_style_init(&styles.style_scrollbar);
-    lv_style_set_width(&styles.style_scrollbar, 4);
-    lv_style_set_radius(&styles.style_scrollbar, 2);
-    lv_style_set_pad_right(&styles.style_scrollbar, 8);
-    lv_style_set_pad_ver(&styles.style_scrollbar, 8);
-    lv_style_set_bg_opa(&styles.style_scrollbar, LV_OPA_50);
-
     lv_subject_add_observer_with_target(&theme_subject, mfd_tile_style_observer_cb, &styles, NULL);
   }
 
   lv_obj_t *tile = lv_obj_create(parent);
   lv_obj_set_name_static(tile, "mfd_tile");
-
-  lv_obj_remove_style_all(tile);
-  lv_obj_add_style(tile, &styles.style_main, 0);
-  lv_obj_add_style(tile, &styles.style_scrollbar, LV_PART_SCROLLBAR);
+  mfd_set_tile_style(tile);
   lv_obj_set_width(tile, TILE_WIDTH);
   lv_obj_set_height(tile, TILE_HEIGHT);
 
