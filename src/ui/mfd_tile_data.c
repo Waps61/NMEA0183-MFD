@@ -10,9 +10,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include <lvgl.h>
-#include <ui/mfd_themes.h>
-#include <font/mfd_fonts.h>
+
 #include <ui/mfd_tile_data.h>
 
 /*********************
@@ -85,20 +83,10 @@ static void mfd_tile_data_style_observer_cb(lv_observer_t *observer, lv_subject_
     inited = true;
 
     lv_style_init(&styles.style_main);
-    lv_style_set_radius(&styles.style_main, 12);
-    lv_style_set_bg_opa(&styles.style_main, LV_OPA_COVER);
-    lv_style_set_shadow_width(&styles.style_main, 24);
-    lv_style_set_shadow_offset_x(&styles.style_main, 4);
-    lv_style_set_shadow_offset_y(&styles.style_main, 6);
-    lv_style_set_pad_all(&styles.style_main, 12);
-    lv_style_set_pad_gap(&styles.style_main, 16);
+    
 
     lv_style_init(&styles.style_scrollbar);
-    lv_style_set_width(&styles.style_scrollbar, 4);
-    lv_style_set_radius(&styles.style_scrollbar, 2);
-    lv_style_set_pad_right(&styles.style_scrollbar, 8);
-    lv_style_set_pad_ver(&styles.style_scrollbar, 8);
-    lv_style_set_bg_opa(&styles.style_scrollbar, LV_OPA_50);
+    
 
     lv_subject_add_observer_with_target(&theme_subject, mfd_tile_data_style_observer_cb, &styles, NULL);
   }
@@ -111,11 +99,11 @@ static void mfd_tile_data_style_observer_cb(lv_observer_t *observer, lv_subject_
   } else
     lv_log("---->mfd_tile_data creation failed!\n");
   lv_obj_remove_style_all(tile_data);
-  lv_obj_add_style(tile_data, &mfd_style_night, 0);
+  //lv_obj_add_style(tile_data, &mfd_style_night, 0);
   lv_obj_set_style_text_font(tile_data, &ui_font_lv_conthrax_96,0);
   lv_obj_set_style_align(tile_data, LV_ALIGN_CENTER, 0);
-  lv_obj_set_style_text_color(tile_data, lv_color_hex(DAY_PRIMARY), 0);
+  //lv_obj_set_style_text_color(tile_data, lv_color_hex(DAY_PRIMARY), 0);
 
-  lv_label_set_text(tile_data,"---");
+  lv_label_set_text(tile_data,"...");
   return tile_data;
 }

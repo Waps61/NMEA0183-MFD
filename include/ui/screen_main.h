@@ -39,7 +39,9 @@ extern "C"
   lv_obj_t *screen_main_create(void);
 
   void test_screen_data_updates();
-  
+
+  void mfd_update_tile_data();
+
   /**********************
    *      MACROS
    **********************/

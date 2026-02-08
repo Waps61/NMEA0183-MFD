@@ -15,24 +15,6 @@
  * Define your display and touch parameters here
  */
 
-#define BLACK 0x0000
-#define BLUE 0x001F
-#define RED 0xF800
-#define GREEN 0x07E0
-#define CYAN 0x07FF
-#define MAGENTA 0xF81F
-#define YELLOW 0xFFE0
-#define WHITE 0xFFFF
-#define NAVY 0x0010
-#define DARKGREEN 0x0184
-#define DARKCYAN 0x0451
-#define MAROON 0xC109
-#define OLIVE 0x8400
-#define DARKGREY 0x6B2D
-#define ORANGE 0xFBE0
-#define GREENYELLOW 0xAFE6
-#define PURPLE 0x8010
-
 /**
  * Display and Touch objects
  */
@@ -69,7 +51,7 @@ uint32_t millis_cb(void)
 // LVGL calls it when a rendered image needs to copied to the display
 void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
 {
-  //lv_log("+++++ In my_disp_flush() ");
+  // lv_log("+++++ In my_disp_flush() ");
 #ifndef DIRECT_RENDER_MODE
   uint32_t w = lv_area_get_width(area);
   uint32_t h = lv_area_get_height(area);
@@ -84,7 +66,7 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
   {
     ti.x[0] = map(ti.x[0], 0, 1023, 0, w - 1); // X-Achse auf 0 - 1023 abgebildet
     ti.y[0] = map(ti.y[0], 0, 599, 0, h - 1);  // Y-Achse auf 0 - 599 abgebildet
-    lv_log("TI Anzahl: %d X: %d Y: %d Area: %d Press: %d\n", ti.count, ti.x[0], ti.y[0], ti.area[0], ti.pressure[0]);
+    // lv_log("TI Anzahl: %d X: %d Y: %d Area: %d Press: %d\n", ti.count, ti.x[0], ti.y[0], ti.area[0], ti.pressure[0]);
     data->point.x = ti.x[0];
     data->point.y = ti.y[0];
     data->state = LV_INDEV_STATE_PRESSED;
@@ -95,7 +77,6 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
   }
 }
 
-
 void touchscreen_setup()
 {
   gfx->begin();
@@ -104,10 +85,10 @@ void touchscreen_setup()
   brightness_changed = false;
   brightness_value = 100;
   delay(100);
-  #ifdef GFX_BL
-    pinMode(GFX_BL, OUTPUT);
-    analogWrite(GFX_BL, DEFAULT_BRIGHTNESS);
-  #endif
+#ifdef GFX_BL
+  pinMode(GFX_BL, OUTPUT);
+  analogWrite(GFX_BL, DEFAULT_BRIGHTNESS);
+#endif
   bbct.init(TOUCH_SDA, TOUCH_SCL, TOUCH_RST, TOUCH_INT);
   iType = bbct.sensorType();
   lv_log("+++++ iType=%d \n", iType);
@@ -141,16 +122,16 @@ void touchscreen_setup()
 #endif
 
 #ifdef ESP32
-  lv_log("+++++ ESP32 definiert\n");
+  lv_log("+++++ ESP32 defined\n");
 #if defined(DIRECT_RENDER_MODE) && (defined(CANVAS) || defined(RGB_PANEL) || defined(DSI_PANEL))
   disp_draw_buf = (lv_color_t *)gfx->getFramebuffer();
-  lv_log("+++++ DIRECT_RENDER_MODE definiert \n");
+  lv_log("+++++ DIRECT_RENDER_MODE defined \n");
 #else  // !(defined(DIRECT_RENDER_MODE) && (defined(CANVAS) || defined(RGB_PANEL) || defined(DSI_PANEL)))
-  lv_log("+++++ DIRECT_RENDER_MODE nicht definiert \n");
+  lv_log("+++++ DIRECT_RENDER_MODE not defined \n");
   disp_draw_buf = (lv_color_t *)heap_caps_malloc(bufSize * 2, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
   if (!disp_draw_buf)
   {
-    lv_log("\n\n+++++ Puffer anlegen (1) fehlgeschlagen \n");
+    lv_log("\n\n+++++ Creating buffers(1) failed \n");
     // remove MALLOC_CAP_INTERNAL flag try again
     disp_draw_buf = (lv_color_t *)heap_caps_malloc(bufSize * 2, MALLOC_CAP_8BIT);
   }
@@ -161,13 +142,11 @@ void touchscreen_setup()
 #endif // !ESP32
   if (!disp_draw_buf)
   {
-    lv_log("\n\n+++++ Puffer anlegen (2) fehlgeschlagen \n");
+    lv_log("\n\n+++++ Creating buffers(2) failed \n");
   }
   else
   {
     disp = lv_display_create(screenWidth, screenHeight);
-    // lv_disp_set_bg_color(disp, LV_PALETTE_AMBER); gibt es nicht!
-    //lv_obj_set_style_bg_color(lv_screen_active(), lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN);
     lv_display_set_flush_cb(disp, my_disp_flush);
 #ifdef DIRECT_RENDER_MODE
     lv_log("\n\n+++++ LV_DISPLAY_RENDER_MODE_DIRECT \n");

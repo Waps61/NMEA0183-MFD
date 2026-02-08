@@ -14,10 +14,12 @@
  *      INCLUDES
  *********************/
 #include <Arduino.h>
-#include <lvgl.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <lvgl.h>
+#include <calc/mfd_calculation.h>
 #include <mfd_conf.h>
 #include <ui/screen_main.h>
 #include <ui/screen_about.h>
@@ -59,67 +61,121 @@ size_t free_bytes;
 /***********************
  *  STATIC PROTOTYPES
  **********************/
-
+lv_obj_t *tile_hash[NR_OF_NMEA_TAGS] = {0};
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+// implement function declared in  NMEA0183.h
+void init_data_store()
+{
+  for (int i = 0; i < NR_OF_NMEA_TAGS; i++)
+  {
+    strcpy(NMEA_DATA_STORE[i], "---");
+    lv_log("NMEA_DATA_STORE[ %d] = %s\n", i, NMEA_DATA_STORE[i]);
+  }
+  data_store_inited = true;
+}
+
+void set_data_store(enum sequence_id tag, const char data[15])
+{
+  strcpy(NMEA_DATA_STORE[tag], data);
+  lv_log("NMEA_data_store[%d] = %s\n", tag, NMEA_DATA_STORE[tag]);
+}
+
 void test_screen_data_updates()
 {
   current_millis = millis();
+  NMEA_runSoftGenerator();
+
+  /**
+   * Remove inline comment if toy want to used fake test data instead of data from
+   * the NMEA_runSoftGenerator()
+   */
   // if (millis() % 3600)
   // {
-  sprintf(tile_data_buffer, "%d", mileage);
-  lv_label_set_text(TRPvalue, tile_data_buffer);
-  mileage = (mileage++) % 1001;
+  // sprintf(tile_data_buffer, "%d", mileage);
+  // lv_label_set_text(tile_hash[TRP], tile_data_buffer);
+  // mileage = (mileage++) % 1001;
+  // // }
+
+  //  if (millis() - previous_millis > UPDATE_DELAY)
+  // {
+  //   previous_millis = current_millis;
+  //   boat_cts = (int)(rand() % 10) + 270;
+  //   sprintf(tile_data_buffer, "%d", boat_cts);
+  //   lv_label_set_text(CTSvalue, tile_data_buffer);
+  //   lv_label_set_text(CTSvalue2, tile_data_buffer);
+  //   boat_hdg = (int)(rand() % 10) + 265;
+  //   sprintf(tile_data_buffer, "%d", boat_hdg);
+  //   lv_label_set_text(HDGvalue, tile_data_buffer);
+  //   boat_cog = (int)(rand() % 5) + 270;
+  //   sprintf(tile_data_buffer, "%d", boat_cog);
+  //   lv_label_set_text(COGvalue, tile_data_buffer);
+  //   lv_label_set_text(COGvalue2, tile_data_buffer);
+  //   boat_sog = (float)(rand() % 20) / 10 + 6;
+  //   sprintf(tile_data_buffer, "%.1f", boat_sog);
+  //   lv_label_set_text(SOGvalue, tile_data_buffer);
+  //   lv_label_set_text(SOGvalue2, tile_data_buffer);
+
+  //   sprintf(tile_data_buffer, "%.1f", (float)(rand() % 25) / 10 + 5);
+  //   lv_label_set_text(DPTvalue, tile_data_buffer);
+  //   sprintf(tile_data_buffer, "%d", (int)(rand() % 4) + 13);
+  //   lv_label_set_text(AWSvalue, tile_data_buffer);
+  //   lv_label_set_text(TWSvalue, tile_data_buffer);
+  //   lv_label_set_text(AWSvalue2, tile_data_buffer);
+  //   boat_awa = (int)(rand() % 5) + 30;
+  //   sprintf(tile_data_buffer, "%d", boat_awa);
+  //   lv_label_set_text(AWAvalue, tile_data_buffer);
+
+  //   sprintf(tile_data_buffer, "%.1f", (float)(boat_sog * cos(boat_awa * PI / 180)));
+  //   lv_label_set_text(VMGvalue, tile_data_buffer);
+
+  //   sprintf(tile_data_buffer, "%d", (int)(rand() % 5) + 40);
+  //   lv_label_set_text(TWAvalue, tile_data_buffer);
+  //   sprintf(tile_data_buffer, "%d", mileage++);
+  //   lv_label_set_text(TRPvalue, tile_data_buffer);
+  //   sprintf(tile_data_buffer, "%.1f", (float)(rand() % 25) / 10 + 5);
+
+  //   sprintf(tile_data_buffer, "%d", boat_cog - boat_cts);
+  //   lv_label_set_text(CMGvalue, tile_data_buffer);
   // }
+}
+
+/**
+ * Read the data from the NMEA_DATA_STORE and write
+ * the value to the specific label if it excist
+ */
+void mfd_update_tile_data()
+{
+  current_millis = millis();
   if (millis() - previous_millis > UPDATE_DELAY)
   {
-    previous_millis = current_millis;
-    boat_cts = (int)(rand() % 10) + 270;
-    sprintf(tile_data_buffer, "%d", boat_cts);
-    lv_label_set_text(CTSvalue, tile_data_buffer);
-    lv_label_set_text(CTSvalue2, tile_data_buffer);
-    boat_hdg = (int)(rand() % 10) + 265;
-    sprintf(tile_data_buffer, "%d", boat_hdg);
-    lv_label_set_text(HDGvalue, tile_data_buffer);
-    boat_cog = (int)(rand() % 5) + 270;
-    sprintf(tile_data_buffer, "%d", boat_cog);
-    lv_label_set_text(COGvalue, tile_data_buffer);
-    lv_label_set_text(COGvalue2, tile_data_buffer);
-    boat_sog = (float)(rand() % 20) / 10 + 6;
-    sprintf(tile_data_buffer, "%.1f", boat_sog);
-    lv_label_set_text(SOGvalue, tile_data_buffer);
-    lv_label_set_text(SOGvalue2, tile_data_buffer);
+    for (int i = CTS; i < NR_OF_NMEA_TAGS; i++)
+    {
 
-    sprintf(tile_data_buffer, "%.1f", (float)(rand() % 25) / 10 + 5);
-    lv_label_set_text(DPTvalue, tile_data_buffer);
-    sprintf(tile_data_buffer, "%d", (int)(rand() % 4) + 13);
-    lv_label_set_text(AWSvalue, tile_data_buffer);
-    lv_label_set_text(TWSvalue, tile_data_buffer);
-    lv_label_set_text(AWSvalue2, tile_data_buffer);
-    boat_awa = (int)(rand() % 5) + 30;
-    sprintf(tile_data_buffer, "%d", boat_awa);
-    lv_label_set_text(AWAvalue, tile_data_buffer);
-
-    sprintf(tile_data_buffer, "%.1f", (float)(boat_sog * cos(boat_awa * PI / 180)));
-    lv_label_set_text(VMGvalue, tile_data_buffer);
-
-    sprintf(tile_data_buffer, "%d", (int)(rand() % 5) + 40);
-    lv_label_set_text(TWAvalue, tile_data_buffer);
-    sprintf(tile_data_buffer, "%d", mileage++);
-    lv_label_set_text(TRPvalue, tile_data_buffer);
-    sprintf(tile_data_buffer, "%.1f", (float)(rand() % 25) / 10 + 5);
-
-    sprintf(tile_data_buffer, "%d", boat_cog - boat_cts);
-    lv_label_set_text(CMGvalue, tile_data_buffer);
+      // If label excist update value
+      if (tile_hash[i] != NULL)
+      {
+        // lv_log("wrting value to label %d: %s\n", i, NMEA_DATA_STORE[i]);
+        lv_label_set_text(tile_hash[i], NMEA_DATA_STORE[i]);
+      }
+    }
   }
 }
 
+/**
+ * Menu button handler from the main menu to select
+ * 1 of the 5 panels.
+ * Cuurently trip panel is always visible but overlayed with the follwoing panels
+ * So need to press a button once to show and twcie to hide
+ *
+ * TO DO: pressing a button should hide all others and visa versa
+ */
 void menu_btn_event_cb(lv_event_t *event)
 {
   lv_obj_t *panel_btn = NULL;
   panel_btn = (lv_obj_t *)lv_event_get_user_data(event);
-  char *panel_name = lv_obj_get_name(panel_btn);
+  const char *panel_name = lv_obj_get_name(panel_btn);
   lv_log("panel to show is %s\n", panel_name);
 
   // lv_log(" panels equal is: %d\n", strcmp(panel_name, "TRIP"));
@@ -152,6 +208,9 @@ void menu_btn_event_cb(lv_event_t *event)
     mfd_hide_panel(panel_btn);
 }
 
+/**
+ * Basically the main routine for the displays etc
+ */
 lv_obj_t *screen_main_create(void)
 {
   LV_TRACE_OBJ_CREATE("begin");
@@ -169,26 +228,28 @@ lv_obj_t *screen_main_create(void)
   if (screen_main == NULL)
     screen_main = lv_obj_create(lv_screen_active()); // lv_obj_create(NULL);
   // Create the main screen as a permanent screen
-  // lv_obj_t *lv_obj_0 = screen_main;
-  // screen_active = lv_obj_create(screen_main);
+
   screen_active = screen_main;
   // lv_log("screen active = %s", lv_obj_get_name(screen_main));
   lv_obj_set_name_static(screen_active, "screen_main_#");
 
+  // 1st thing to do is initialize the data_store for NMEA values
+  if (!data_store_inited)
+    init_data_store();
+
   // Add a menubar
   lv_obj_t *menu_bar = lv_obj_create(screen_active);
   lv_obj_remove_style_all(menu_bar);
-  //mfd_set_menu_bar_style(menu_bar);
   lv_obj_set_flex_flow(menu_bar, LV_FLEX_FLOW_COLUMN);
-  lv_obj_set_style_bg_color(menu_bar, lv_color_hex(DAWN_BACKGROUND),0);
-  lv_obj_set_style_bg_opa(menu_bar, LV_OPA_50,0);
-  lv_obj_set_style_text_color(menu_bar, lv_color_hex(DAY_TEXT_ON_BACKGROUND),0);
-  lv_obj_set_style_text_opa(menu_bar, LV_OPA_50,0);
-  lv_obj_set_style_text_font(menu_bar, &ui_font_lv_conthrax_16,0);
-  lv_obj_set_style_border_color(menu_bar, lv_color_hex(DAWN_TEXT_ON_PRIMARY),0);
-  lv_obj_set_style_border_width(menu_bar, 1,0);
-  lv_obj_set_style_text_font(menu_bar, &ui_font_lv_conthrax_16,0);
-  lv_obj_set_style_text_align(menu_bar, LV_ALIGN_CENTER,0);
+  lv_obj_set_style_bg_color(menu_bar, lv_color_hex(DAWN_BACKGROUND), 0);
+  lv_obj_set_style_bg_opa(menu_bar, LV_OPA_50, 0);
+  lv_obj_set_style_text_color(menu_bar, lv_color_hex(DAY_TEXT_ON_BACKGROUND), 0);
+  lv_obj_set_style_text_opa(menu_bar, LV_OPA_50, 0);
+  lv_obj_set_style_text_font(menu_bar, &ui_font_lv_conthrax_16, 0);
+  lv_obj_set_style_border_color(menu_bar, lv_color_hex(DAWN_TEXT_ON_PRIMARY), 0);
+  lv_obj_set_style_border_width(menu_bar, 1, 0);
+  lv_obj_set_style_text_font(menu_bar, &ui_font_lv_conthrax_16, 0);
+  lv_obj_set_style_text_align(menu_bar, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_set_style_shadow_color(menu_bar, lv_color_hex(DAWN_SURFACE), 0);
   lv_obj_set_style_shadow_width(menu_bar, 5, 0);
 
@@ -196,9 +257,8 @@ lv_obj_t *screen_main_create(void)
   lv_obj_set_y(menu_bar, 0);
   lv_obj_set_width(menu_bar, 145);
   lv_obj_set_height(menu_bar, lv_pct(100));
-  lv_obj_set_style_radius(menu_bar, 5,0);
-  lv_obj_set_style_margin_all(menu_bar, 2,0);
-  
+  lv_obj_set_style_radius(menu_bar, 5, 0);
+  lv_obj_set_style_margin_all(menu_bar, 2, 0);
 
   // Create the panels TRIP, WIND, COURSE, BRIGHTNESS and SETTINGS
   lv_obj_t *mfd_trip_panel = mfd_panel_create(screen_active, "TRIP");
@@ -214,7 +274,7 @@ lv_obj_t *screen_main_create(void)
   // Add the buttons and their link to their panel to the menubar
   // The void *userdata reference  is the reference to the panel to show
   lv_obj_t *trip_btn = mfd_button_create(menu_bar, "TRIP");
-  lv_obj_add_flag(trip_btn, LV_OBJ_FLAG_CHECKABLE);
+  // lv_obj_add_flag(trip_btn, LV_OBJ_FLAG_CHECKABLE);
   lv_obj_add_event_cb(trip_btn, menu_btn_event_cb, LV_EVENT_CLICKED, mfd_trip_panel);
 
   lv_obj_t *wind_btn = mfd_button_create(menu_bar, "WIND");
@@ -230,61 +290,61 @@ lv_obj_t *screen_main_create(void)
   lv_obj_add_event_cb(setting_btn, menu_btn_event_cb, LV_EVENT_CLICKED, mfd_settings_panel);
 
   lv_obj_t *lv_button_0 = mfd_button_create(menu_bar, "(i)");
-  lv_obj_add_flag(wind_btn, LV_OBJ_FLAG_CHECKABLE);
+  // lv_obj_add_flag(wind_btn, LV_OBJ_FLAG_CHECKABLE);
 
   // Create the about screen as a child of the main screen
   lv_obj_add_screen_create_event(lv_button_0, LV_EVENT_CLICKED, screen_about_create, LV_SCREEN_LOAD_ANIM_MOVE_TOP, 500, 0);
 
   // Add the tiles and their tile_data objects to the trip panel
   CTSbox = mfd_panel_add_tile(mfd_trip_panel, "CTS", "o", CTSbox);
-  CTSvalue = mfd_tile_add_tile_data(CTSbox, CTSvalue);
-  
+  tile_hash[CTS] = mfd_tile_add_tile_data(CTSbox, tile_hash[CTS]);
+
   COGbox = mfd_panel_add_tile(mfd_trip_panel, "COG", "o", COGbox);
-  COGvalue = mfd_tile_add_tile_data(COGbox, COGvalue);
+  tile_hash[COG] = mfd_tile_add_tile_data(COGbox, tile_hash[COG]);
 
   SOGbox = mfd_panel_add_tile(mfd_trip_panel, "SOG", "KTS", SOGbox);
-  SOGvalue = mfd_tile_add_tile_data(SOGbox, SOGvalue);
+  tile_hash[SOG] = mfd_tile_add_tile_data(SOGbox, tile_hash[SOG]);
 
   DPTbox = mfd_panel_add_tile(mfd_trip_panel, "DPT", "m", DPTbox);
-  DPTvalue = mfd_tile_add_tile_data(DPTbox, DPTvalue);
+  tile_hash[DPT] = mfd_tile_add_tile_data(DPTbox, tile_hash[DPT]);
 
   AWSbox = mfd_panel_add_tile(mfd_trip_panel, "AWS", "KTS", AWSbox);
-  AWSvalue = mfd_tile_add_tile_data(AWSbox, AWSvalue);
+  tile_hash[AWS] = mfd_tile_add_tile_data(AWSbox, tile_hash[AWS]);
 
   TRPbox = mfd_panel_add_tile(mfd_trip_panel, "TRP", "nm", TRPbox);
-  TRPvalue = mfd_tile_add_tile_data(TRPbox, TRPvalue);
+  tile_hash[TRP] = mfd_tile_add_tile_data(TRPbox, tile_hash[TRP]);
 
   // Add the tiles and their tile_data objects to thwe wind panel
   AWAbox = mfd_panel_add_tile(mfd_wind_panel, "AWA", "o", AWAbox);
-  AWAvalue = mfd_tile_add_tile_data(AWAbox, AWAvalue);
-  
+  tile_hash[AWA] = mfd_tile_add_tile_data(AWAbox, tile_hash[AWA]);
+
   TWAbox = mfd_panel_add_tile(mfd_wind_panel, "TWA", "o", TWAbox);
-  TWAvalue = mfd_tile_add_tile_data(TWAbox, TWAvalue);
+  tile_hash[TWA] = mfd_tile_add_tile_data(TWAbox, tile_hash[TWA]);
 
   AWSbox2 = mfd_panel_add_tile(mfd_wind_panel, "AWS", "KTS", AWSbox2);
-  AWSvalue2 = mfd_tile_add_tile_data(AWSbox2, AWSvalue2);
+  tile_hash[AWS2] = mfd_tile_add_tile_data(AWSbox2, tile_hash[AWS2]);
 
   TWSbox = mfd_panel_add_tile(mfd_wind_panel, "TWS", "KTS", SOGbox);
-  TWSvalue = mfd_tile_add_tile_data(TWSbox, TWSvalue);
+  tile_hash[TWS] = mfd_tile_add_tile_data(TWSbox, tile_hash[TWS]);
 
   // Add the tiles and their tile_data objects to thwe course panel
   CTSbox2 = mfd_panel_add_tile(mfd_course_panel, "CTS", "o", CTSbox2);
-  CTSvalue2 = mfd_tile_add_tile_data(CTSbox2, CTSvalue2);
+  tile_hash[CTS2] = mfd_tile_add_tile_data(CTSbox2, tile_hash[CTS2]);
 
   HDGbox = mfd_panel_add_tile(mfd_course_panel, "HDG", "o", HDGbox);
-  HDGvalue = mfd_tile_add_tile_data(HDGbox, HDGvalue);
+  tile_hash[HDG] = mfd_tile_add_tile_data(HDGbox, tile_hash[HDG]);
 
   COGbox2 = mfd_panel_add_tile(mfd_course_panel, "COG", "o", COGbox2);
-  COGvalue2 = mfd_tile_add_tile_data(COGbox2, COGvalue2);
+  tile_hash[COG2] = mfd_tile_add_tile_data(COGbox2, tile_hash[COG2]);
 
   SOGbox2 = mfd_panel_add_tile(mfd_course_panel, "SOG", "KTS", SOGbox2);
-  SOGvalue2 = mfd_tile_add_tile_data(SOGbox2, SOGvalue2);
+  tile_hash[SOG2] = mfd_tile_add_tile_data(SOGbox2, tile_hash[SOG2]);
 
   VMGbox = mfd_panel_add_tile(mfd_course_panel, "VMG", "KTS", VMGbox);
-  VMGvalue = mfd_tile_add_tile_data(VMGbox, VMGvalue);
+  tile_hash[VMG] = mfd_tile_add_tile_data(VMGbox, tile_hash[VMG]);
 
   CMGbox = mfd_panel_add_tile(mfd_course_panel, "CMG", "0", CMGbox);
-  CMGvalue = mfd_tile_add_tile_data(CMGbox, CMGvalue);
+  tile_hash[CMG] = mfd_tile_add_tile_data(CMGbox, tile_hash[CMG]);
 
   mfd_brightness_panel_create(mfd_bright_panel);
   mfd_config_panel_create(mfd_settings_panel);

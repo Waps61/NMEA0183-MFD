@@ -17,6 +17,9 @@ static int tstcntr = 0;
 
 static lv_style_t style_btnbase;
 
+/**
+ * background holding place for the 4 brightness buttons
+ */
 void init_style_btnbase()
 {
   lv_style_init(&style_btnbase);

@@ -88,7 +88,7 @@ void mfd_tile_set_label(lv_obj_t *tile, const char *title)
   lv_obj_set_style_align(label, LV_ALIGN_TOP_MID, 0);
   lv_label_set_text(label, title);
   // lv_obj_set_align(label, LV_ALIGN_TOP_MID);
-  lv_obj_set_style_text_color(label, lv_color_hex(DAY_TEXT_ON_BACKGROUND), 0);
+  //lv_obj_set_style_text_color(label, lv_color_hex(DAY_TEXT_ON_BACKGROUND), 0);
   lv_obj_set_style_text_font(label, &ui_font_lv_conthrax_24, 0);
 }
 
@@ -127,8 +127,8 @@ lv_obj_t *mfd_tile_create(lv_obj_t *parent)
   {
     inited = true;
 
-    lv_style_init(&styles.style_main);
-    lv_style_init(&styles.style_scrollbar);
+    // lv_style_init(&styles.style_main);
+    // lv_style_init(&styles.style_scrollbar);
     lv_subject_add_observer_with_target(&theme_subject, mfd_tile_style_observer_cb, &styles, NULL);
   }
 

@@ -5,22 +5,12 @@
 #define PROGRAM_NAME "MFD ESP32"
 #define PROGRAM_VERSION "0.1"
 
-#define SAMPLERATE 115200
-
-#define LISTENER_RATE 4800 // Baudrate for the listner
-#define LISTENER_RX 18     // Serial1 Rx port
-#define LISTENER_TX 19     // Serial1 TX port
-#define TALKER_RATE 38400  // Baudrate for the talker
-#define TALKER_PORT 23     // SoftSerial port 2
-
-#define NMEA_RX 22
-#define NMEA_TX 23
 //*** Some conversion factors
 #define FTM 0.3048    // feet to meters
 #define MTF 3.28084   // meters to feet
 #define NTK 1.852     // nautical mile to km
 #define KTN 0.5399569 // km to nautical mile
-//#define PI 3.14159265359 // The definition of Pi
+// #define PI 3.14159265359 // The definition of Pi
 
 //*** The NMEA defines in totl 82 characters including the starting
 //*** characters $ or ! and the checksum character *, the checksum
@@ -117,16 +107,19 @@ $HCXDR,A,171,D,PITCH,A,-37,D,ROLL,G,367,,MAGX,G,2420,,MAGY,G,-8984,,MAGZ*41
 */
 
 #define FIELD_BUFFER 15
+#define NR_OF_NMEA_TAGS 20 // make sure this equal to nr of NMEA_TAG
 
-
-
+// Helper variables for calculation on secondar data
 static float boat_sog = 0.0;
 static int boat_hdg = 0;
 static int boat_awa = 0;
 static int boat_cts = 0;
 static int boat_cog = 0;
 
+// Used as a reference to the required NMEA tag
+// oldVal is used for specific purposes while processing nmea data
 static enum sequence_id {
+  oldVal,
   CTS,
   COG,
   SOG,
@@ -139,29 +132,24 @@ static enum sequence_id {
   LOG,
   TRP,
   VMG,
-  CMG
+  CMG,
+  DIR,
+  BAT,
+  CTS2,
+  COG2,
+  SOG2,
+  AWS2
 } NMEA_TAG;
 
-static enum tag_id
-{
-  TAG_NAME,
-  TAG_UNIT,
-  TAG_TYPE
-} TAG_ID;
-
-static const char *nmea_hash[][3] = {
-    {"CTS", "o", "d"},
-    {"COG", "o", "d"},
-    {"SOG", "KTS", "f"},
-    {"DPT", "m", "f"},
-    {"AWA", "o", "d"},
-    {"AWS", "KTS", "d"},
-    {"TWA", "o", "d"},
-    {"TWS", "KTS", "d"},
-    {"HDG", "o", "d"},
-    {"LOG", "nm", "d"},
-    {"TRP", "nm", "d"},
-    {"VMG", "KTS", "f"},
-    {"CMG", "o", "d"}};
+/**
+ * The data store is the central place where NMEA data is stored  and filled
+ * and is used for incomming NMEA data and and to update the data_tiles
+ */
+// Declare buffers for NMEA string and display parameters
+static char NMEA_DATA_STORE[NR_OF_NMEA_TAGS][NMEA_BUFFER_SIZE + 1] = {0};
+// and provide a function to initiate it
+static bool data_store_inited = false;
+extern void init_data_store();
+extern void set_data_store(enum sequence_id tag, const char data[15]);
 
 #endif // NMEA0183_DATA_H

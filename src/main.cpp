@@ -45,7 +45,7 @@
            \\___\\\_________\                       \\
             \     \__________________________________\\
              \_________________________________________\
-  
+
   Hardware setup:
   RS-484 (NMEA0183 protocol) are read from GPIO
 
@@ -96,9 +96,8 @@
 #include <lvgl.h>
 #include <mfd_conf.h>
 
-#define DEMO //When active data is simulated for the display outcomment if not used
-//#define TEST
-
+#define DEMO // When active data is simulated for the display outcomment if not used
+// #define TEST
 
 #include <font/mfd_fonts.h>
 #include <NMEA0183_conf.h>
@@ -109,13 +108,13 @@
 #include <ui/screen_about.h>
 #include <ui/mfd_themes.h>
 #include <ui/mfd_bright_panel.h>
- #endif //TEST
+#endif // TEST
 
- #ifdef TEST
- #include "test/testlab.h"
+#ifdef TEST
+#include "test/testlab.h"
 
- #endif //TEST
-lv_style_t style_base;
+#endif // TEST
+//lv_style_t style_base;
 lv_obj_t *main_view = NULL;
 lv_theme_t *mfd_theme_day;
 
@@ -140,21 +139,20 @@ void setup()
   lv_log("+++++ using lvgl V%d.%d.%d \n", lv_version_major(), lv_version_minor(), lv_version_patch());
 
   touchscreen_setup();
- #ifndef TEST
+#ifndef TEST
   mfd_theme_day = lv_theme_default_init(
       disp,                      /* Use DPI, size, etc. from this display */
       lv_color_hex(DAY_PRIMARY), /* Primary and secondary palette */
       lv_color_hex(DAY_SECONDARY),
-      false,                   /* Dark theme?  False = light theme. */
+      false, /* Dark theme?  False = light theme. */
       &ui_font_lv_conthrax_16);
 
   lv_log("+++++ Setup done\n");
-  lv_log("--------------------------->update_data_values =%d\n", update_data_values);
   ui_screens_init("yazz_mfd");
-  
+
   lv_disp_load_scr(screen_main);
-  #endif //TEST
-  #ifdef TEST
+#endif // TEST
+#ifdef TEST
   testlab_init();
 #endif // TEST
 }
@@ -162,15 +160,18 @@ void setup()
 void loop()
 {
   lv_task_handler(); /* let the GUI do its work */
-  delay(25);
-  #ifndef TEST
-  #ifdef DEMO
+  delay(5);
+#ifndef TEST
+#ifdef DEMO
   test_screen_data_updates();
-  #endif
-  if (mfd_style_changed)
-  {
-    mfd_style_changed = false;
-    lv_obj_report_style_change(&mfd_style_night);
-  }
-  #endif //TEST
+#endif
+
+  mfd_update_tile_data();
+
+// if (mfd_style_changed)
+// {
+//   mfd_style_changed = false;
+//   lv_obj_report_style_change(&mfd_style_night);
+// }
+#endif // TEST
 }

@@ -34,24 +34,5 @@ static lv_obj_t *SOGbox, *CTSbox, *COGbox, *DPTbox, *AWAbox, *TWAbox, *AWSbox, *
 // some boxes ure used twice
 static lv_obj_t *SOGbox2, *COGbox2, *CTSbox2, *AWSbox2 = NULL;
 
-static lv_obj_t *SOGvalue, *COGvalue, *CTSvalue, *DPTvalue, *AWAvalue, *TWAvalue,
-    *AWSvalue, *TWSvalue, *TRPvalue, *VMGvalue, *CMGvalue, *LOGvalue, *Dummyvalue,
-    *HDGvalue = NULL;
-    //some values are used twice
-static lv_obj_t *SOGvalue2, *COGvalue2, *CTSvalue2, *AWSvalue2 = NULL;
-
-extern lv_obj_t *NMEAtabview,
-    *NMEAtab_buttons, *NMEAtab1, *NMEAtab2, *NMEAtab3, *NMEAtab4, *NMEAtab5;
-
-extern lv_obj_t *tab_array[];
-
-/*A base style*/
-extern lv_style_t style_base;
-
-extern lv_style_t Databox_style, Databox_caption_style, Databox_unit_style;
-
-static char Databoxbuffer[BOX_BUFFER_SIZE];
-
-extern uint32_t NMEAtab_count;
 
 #endif // MFD_CONF_H

@@ -125,7 +125,7 @@ lv_obj_t *mfd_panel_add_tile(lv_obj_t *panel, char const *nmea_tag, char const *
   {
     tile = mfd_tile_create(panel);
     lv_obj_set_name_static(tile, "mfd_tile");
-
+    mfd_set_tile_style(tile);
     lv_obj_set_style_x(tile, pdata->draw_pos_x, 0);
     lv_obj_set_style_y(tile, pdata->draw_pos_y, 0);
     pdata->tile_count++;
